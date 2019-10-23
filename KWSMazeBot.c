@@ -98,18 +98,17 @@ void gyrodrift()
 
 void DisplayVars() {
 	displayTextLine(line1,"Gyro=%d",getGyroDegrees(Gyro));
-	displayVariableValues(line2,gyroValue);
-	displayVariableValues(line3,gyroError);
+	displayVariableValues(line2,getMotorSpeed(RightMotor));
+	displayVariableValues(line3,getMotorSpeed(LeftMotor));
 	//displayVariableValues(line4,global_2);
 	//displayVariableValues(line5,global_3);
 
 }
 
 void mazeBotLeft(int speed = 50) {
-		gyroValue=0;
-	gyroError=0;
+	gyroValue=0;
 	resetGyro(Gyro);
-	while (gyroValue > 91 || gyroValue < 89) {
+	while (getGyroDegrees(Gyro) > 91 || getGyroDegrees(Gyro) < 89) {
 		setMotorSpeed(LeftMotor, speed);
 		setMotorSpeed(RightMotor, -speed);
 	}
@@ -119,9 +118,8 @@ void mazeBotLeft(int speed = 50) {
 
 void mazeBotRight(int speed = 50) {
 	gyroValue=0;
-	gyroError=0;
 	resetGyro(Gyro);
-	while (gyroValue < -91 || gyroValue > -89) {
+	while (getGyroDegrees(Gyro) < -91 || getGyroDegrees(Gyro) > -89) {
 		setMotorSpeed(LeftMotor, -speed);
 		setMotorSpeed(RightMotor, speed);
 	}

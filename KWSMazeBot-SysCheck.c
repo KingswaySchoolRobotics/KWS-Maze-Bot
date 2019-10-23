@@ -42,9 +42,9 @@ task main()
 		delay(1000);
 		mazeBotDrive(100);
 		delay(1000);
-		mazeBotLeft(25);
+		mazeBotLeft(50);
 		delay(1000);
-		mazeBotRight(25);
+		mazeBotRight(50);
 		//Delay for Brake Test
 		playSound(soundPowerOff2);
 		displayTextLine(line4, "Please Test Wheels for motor brake");
