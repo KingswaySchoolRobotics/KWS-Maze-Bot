@@ -1,5 +1,6 @@
 #pragma systemFile
 
+bool ProgFinnished;
 
 #define   DATALOG_SERIES_0    0
 #define   DATALOG_SERIES_1    1
@@ -32,14 +33,14 @@ void DataCollection () /* ignore values on bottom of screen only graph values ar
 		global_1 = getGyroHeading(Gyro); //series 1
 		global_2 = gyroValue; // 2
 		global_3 = gyroError; // 3
-	//	global_4 = getColorHue(BallColor); //4
+		//	global_4 = getColorHue(BallColor); //4
 		global_5 = getMotorSpeed(RightMotor); //5
 		global_6 = getMotorSpeed(LeftMotor); //6
-	//	global_7 = getMotorSpeed(Intake); //7
-	//	global_8 = getMotorSpeed(CubeClaw); //8
+		//	global_7 = getMotorSpeed(Intake); //7
+		//	global_8 = getMotorSpeed(CubeClaw); //8
 
 		datalogDataGroupStart();
-		datalogAddValue( DATALOG_SERIES_0, global_1 );
+		datalogAddValue( DATALOG_SERIES_0, global_1);
 		datalogAddValue( DATALOG_SERIES_1, global_2 );
 		datalogAddValue( DATALOG_SERIES_2, global_3 );
 		datalogAddValue( DATALOG_SERIES_3, global_4 );
@@ -63,46 +64,99 @@ void DataCollection () /* ignore values on bottom of screen only graph values ar
 	}
 }
 
-task gyroTask()
+/*void GyroValueReset(){
+	gyroValue=0;
+	gyroError=0;
+	resetGyro(Gyro);
+}*/
+
+void gyrodrift()
 {
- long rate;
- long angle, lastAngle;
- lastAngle = 0;
- gyroError=0;
- // Change sensitivity, this allows the rate reading to be higher
- setGyroSensitivity(Gyro, gyroNormalSensitivity);
- //Reset the gyro sensor to remove any previous data.
- resetGyro(Gyro);
- wait1Msec(1000);
- repeat (forever) {
-  rate = getGyroRate(Gyro);
-  angle = getGyroDegrees(Gyro);
-  // If big rate then ignore gyro changes
-  if( abs( rate ) < 2 )
-  {
-   if( angle != lastAngle )
-    gyroError += lastAngle - angle;
-  }
-  lastAngle = angle;
-  gyroValue = angle + gyroError;
-  wait1Msec(10);
- }
+	long rate;
+	long angle, lastAngle;
+	lastAngle = 0;
+	gyroError=0;
+	// Change sensitivity, this allows the rate reading to be higher
+	setGyroSensitivity(Gyro, gyroNormalSensitivity);
+	//Reset the gyro sensor to remove any previous data.
+	resetGyro(Gyro);
+	wait1Msec(1000);
+	repeat (forever) {
+		rate = getGyroRate(Gyro);
+		angle = getGyroDegrees(Gyro);
+		// If big rate then ignore gyro changes
+		if( abs( rate ) < 2 )
+		{
+			if( angle != lastAngle )
+				gyroError += lastAngle - angle;
+		}
+		lastAngle = angle;
+		gyroValue = angle + gyroError;
+		wait1Msec(10);
+	}
 }
 
-task Display() {
-	displaySensorValues(line1,Gyro);
-	displayVariableValues(gyroValue);
-	displayVariableValues(gyroError);
-
-
-}
-
-void mazeBotLeft(int speed = 75) {
-
+void DisplayVars() {
+	displayTextLine(line1,"Gyro=%d",getGyroDegrees(Gyro));
+	displayVariableValues(line2,gyroValue);
+	displayVariableValues(line3,gyroError);
+	//displayVariableValues(line4,global_2);
+	//displayVariableValues(line5,global_3);
 
 }
 
-void mazeBotRight(int speed = 75) {
-
-
+void mazeBotLeft(int speed = 50) {
+		gyroValue=0;
+	gyroError=0;
+	resetGyro(Gyro);
+	while (gyroValue > 91 || gyroValue < 89) {
+		setMotorSpeed(LeftMotor, speed);
+		setMotorSpeed(RightMotor, -speed);
+	}
+	setMotorSpeed(LeftMotor,0);
+	setMotorSpeed(RightMotor, 0);
 }
+
+void mazeBotRight(int speed = 50) {
+	gyroValue=0;
+	gyroError=0;
+	resetGyro(Gyro);
+	while (gyroValue < -91 || gyroValue > -89) {
+		setMotorSpeed(LeftMotor, -speed);
+		setMotorSpeed(RightMotor, speed);
+	}
+	setMotorSpeed(LeftMotor,0);
+	setMotorSpeed(RightMotor, 0);
+}
+
+void mazeBotStop(){
+	setMotorSpeed(LeftMotor,0);
+	setMotorSpeed(RightMotor,0);
+}
+
+void mazeBotDrive (int speed) {
+	setMotorSpeed(LeftMotor, -speed);
+	setMotorSpeed(RightMotor, -speed);
+}
+
+/*void mazeBotDegrees(int BotDegree ,int speed = 50) {
+	resetGyro(Gyro);
+	if (BotDegree>0) {
+		//if Right Deg
+	while (gyroValue > (BotDegree+1) || gyroValue < (BotDegree-1)) {
+		setMotorSpeed(LeftMotor, -speed);
+		setMotorSpeed(RightMotor, speed);
+	}
+	setMotorSpeed(LeftMotor,0);
+	setMotorSpeed(RightMotor, 0);
+} else {
+	//if Left Deg
+	while (gyroValue < -(BotDegree+1) || gyroValue > -(BotDegree-1)) {
+		setMotorSpeed(LeftMotor, speed);
+		setMotorSpeed(RightMotor, -speed);
+	}
+	setMotorSpeed(LeftMotor,0);
+	setMotorSpeed(RightMotor, 0);
+}
+}
+*/

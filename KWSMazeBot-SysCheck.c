@@ -36,7 +36,22 @@ task main()
 		global_5 = getMotorSpeed(RightMotor); //5
 		global_6 = getMotorSpeed(LeftMotor); //6
 		//insert MazeBot code here
-
+		mazeBotDrive(-100);
+		delay(1000);
+		mazeBotStop();
+		delay(1000);
+		mazeBotDrive(100);
+		delay(1000);
+		mazeBotLeft(25);
+		delay(1000);
+		mazeBotRight(25);
+		//Delay for Brake Test
+		playSound(soundPowerOff2);
+		displayTextLine(line4, "Please Test Wheels for motor brake");
+		delay(4000);
+		displayTextLine(line4, "Sys Check Complete");
+		playSound(soundHeadlightsOff);
+		delay(1000);
 		//End of MazeBot Code
 		ProgFinnished = true;
 	}
