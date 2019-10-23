@@ -98,8 +98,9 @@ void gyrodrift()
 
 void DisplayVars() {
 	displayTextLine(line1,"Gyro=%d",getGyroDegrees(Gyro));
-	displayVariableValues(line2,getMotorSpeed(RightMotor));
-	displayVariableValues(line3,getMotorSpeed(LeftMotor));
+	displayTextLine(line2, "Distance=%d",getDistanceValue(Ultrasonic));
+	displayVariableValues(line3,getMotorSpeed(RightMotor));
+	displayVariableValues(line4,getMotorSpeed(LeftMotor));
 	//displayVariableValues(line4,global_2);
 	//displayVariableValues(line5,global_3);
 
